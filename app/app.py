@@ -5,6 +5,7 @@ import os
 import random
 import string
 import uuid
+import jwt
 
 import filetype
 from flask import Flask, jsonify, request, send_from_directory, Response
@@ -26,6 +27,13 @@ limiter = Limiter(app, key_func=get_remote_address, default_limits=[])
 
 app.use_x_sendfile = True
 
+@app.before_request
+def before_request():
+    try:
+        token = request.headers['Authorization'].split(" ")[1]
+        data = jwt.decode(token, os.environ.get('PGRST_JWT_SECRET'))
+    except:
+        return jsonify(error="File is missing!"), 401       
 
 @app.after_request
 def after_request(resp):
