@@ -31,9 +31,9 @@ app.use_x_sendfile = True
 def before_request():
     try:
         token = request.headers['Authorization'].split(" ")[1]
-        data = jwt.decode(token, os.environ.get('PGRST_JWT_SECRET'))
+        data = jwt.decode(token, os.environ.get('PGRST_JWT_SECRET'), algorithms=["HS256"])
     except:
-        return jsonify(error="File is missing!"), 401       
+        return jsonify(error="JWT is missing!"), 401
 
 @app.after_request
 def after_request(resp):
